@@ -1,0 +1,86 @@
+# SPARC-Risk: image + gene-expression-program fusion model.
+# Architecture: signature-query attention over image patches with cancer-specific gating.
+# Used for the main results in the paper (TCGA pan-cancer + external validation).
+
+cross_validation:
+  external_splits: data/mmp_hybrid_splits_v2_20cancer.csv
+  n_folds: 5
+  no_validation: false
+
+data:
+  # Path conventions: override these for your environment, or set
+  # SPARC_IMG_FEATURE_DIR / SPARC_GEP_FEATURE_DIR env vars.
+  img_feature_dir: features/hoptimus1                 # per-slide hoptimus1 patch features (.h5)
+  gep_feature_dir: predicted_programs_transformers    # per-slide SPARC-Map gene-program scores (.h5)
+  clinical_csv: data/clinical_dss.csv
+  batch_size: 4
+  val_batch_size: 4
+  max_patches: 4096
+  num_workers: 4
+  use_gep: true
+
+model:
+  fusion: signature_query
+  aggregator: attn_mil
+  head: nll_surv
+  img_dim: 1536       # hoptimus1 embedding size
+  gep_dim: 40         # number of gene programs
+  hidden_dim: 256
+  pos_dim: 16
+  n_bins: 4           # NLL-surv discretisation
+  num_heads: 4
+  k_nn: 64
+  signature_pool: attn
+  attn_dropout: 0.1
+  modality_dropout: 0.2
+  chunk_size: 4096
+  cancer_conditioning: true
+  gate_init: 0.0
+  use_aux_losses: false
+  use_checkpoint: true
+  use_gep_residual: false
+
+training:
+  optimizer: adam
+  lr: 0.0001
+  gate_lr: 0.002
+  weight_decay: 0.0002
+  scheduler: cosine
+  cosine_t_max: 20
+  max_epochs: 20
+  accum_steps: 8
+  use_swa: false
+  seed: 1337
+  log_every: 10
+
+early_stopping:
+  patience: 3
+  min_delta: 0.003
+
+logging:
+  out_dir: runs
+  use_wandb: false
+  wandb_project: sparc
+  wandb_run_name: sparc_risk
+
+metrics:
+  td_times: [30.0, 90.0, 180.0, 365.0, 730.0, 1095.0, 1825.0]
+  cancer_groups:
+    blca: [TCGA-BLCA]
+    brca: [TCGA-BRCA]
+    cesc: [TCGA-CESC]
+    crc:  [TCGA-COAD, TCGA-READ]
+    esca: [TCGA-ESCA]
+    gbm:  [TCGA-GBM]
+    hnsc: [TCGA-HNSC]
+    kirc: [TCGA-KIRC]
+    kirp: [TCGA-KIRP]
+    lgg:  [TCGA-LGG]
+    lihc: [TCGA-LIHC]
+    luad: [TCGA-LUAD]
+    lusc: [TCGA-LUSC]
+    paad: [TCGA-PAAD]
+    sarc: [TCGA-SARC]
+    skcm: [TCGA-SKCM]
+    stad: [TCGA-STAD]
+    ucec: [TCGA-UCEC]

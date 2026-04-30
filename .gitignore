@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+.coverage
+.tox/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.python-version
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data — large files distributed separately, see data/README.md
+data/*.csv
+!data/README.md
+
+# Trained checkpoints — distributed separately
+checkpoints/
+runs/
+
+# Inference outputs and figures — regenerated from code.
+# Anchored to the repo root so it does not match docs/figs/ (which holds
+# the README hero images).
+/results/
+/figs/
+*.npz
+*.h5
+*.pt
+
+# OS
+.DS_Store
+Thumbs.db

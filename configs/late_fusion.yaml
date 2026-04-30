@@ -1,0 +1,74 @@
+# Late-fusion ablation: image and gene-program streams kept entirely separate
+# until the slide-level embedding, then concatenated. Used to compare against
+# the early/cross-attention fusion in SPARC-Risk.
+
+cross_validation:
+  external_splits: data/mmp_hybrid_splits_v2_20cancer.csv
+  n_folds: 5
+  no_validation: false
+
+data:
+  img_feature_dir: features/hoptimus1
+  gep_feature_dir: predicted_programs_transformers
+  clinical_csv: data/clinical_dss.csv
+  batch_size: 4
+  val_batch_size: 4
+  max_patches: 4096
+  num_workers: 4
+  use_gep: true
+
+model:
+  fusion: late_fusion
+  aggregator: attn_mil
+  head: nll_surv
+  img_dim: 1536
+  gep_dim: 40
+  hidden_dim: 256
+  pos_dim: 16
+  n_bins: 4
+  cancer_conditioning: true
+  fusion_dropout: 0.25
+
+training:
+  optimizer: adam
+  lr: 0.0001
+  weight_decay: 0.0001
+  scheduler: cosine
+  cosine_t_max: 20
+  max_epochs: 20
+  accum_steps: 8
+  use_swa: false
+  seed: 1337
+  log_every: 10
+
+early_stopping:
+  patience: 3
+  min_delta: 0.003
+
+logging:
+  out_dir: runs
+  use_wandb: false
+  wandb_project: sparc
+  wandb_run_name: late_fusion
+
+metrics:
+  td_times: [30.0, 90.0, 180.0, 365.0, 730.0, 1095.0, 1825.0]
+  cancer_groups:
+    blca: [TCGA-BLCA]
+    brca: [TCGA-BRCA]
+    cesc: [TCGA-CESC]
+    crc:  [TCGA-COAD, TCGA-READ]
+    esca: [TCGA-ESCA]
+    gbm:  [TCGA-GBM]
+    hnsc: [TCGA-HNSC]
+    kirc: [TCGA-KIRC]
+    kirp: [TCGA-KIRP]
+    lgg:  [TCGA-LGG]
+    lihc: [TCGA-LIHC]
+    luad: [TCGA-LUAD]
+    lusc: [TCGA-LUSC]
+    paad: [TCGA-PAAD]
+    sarc: [TCGA-SARC]
+    skcm: [TCGA-SKCM]
+    stad: [TCGA-STAD]
+    ucec: [TCGA-UCEC]

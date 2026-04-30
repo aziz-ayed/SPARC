@@ -1,0 +1,27 @@
+name: sparc
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pytorch>=2.1
+  - pytorch-cuda=12.1   # adjust for your CUDA version
+  - numpy>=1.24
+  - pandas>=2.0
+  - scipy>=1.11
+  - scikit-learn>=1.3
+  - h5py>=3.9
+  - pyyaml>=6.0
+  - tqdm>=4.65
+  - matplotlib>=3.7
+  - seaborn>=0.12
+  - openslide
+  - jupyter
+  - pip:
+    - scikit-survival>=0.21
+    - lifelines>=0.27
+    - pylibCZIrw>=4.0
+    - openslide-python>=1.3
+    - -e .
